@@ -1,0 +1,10 @@
+# --- Data King's Python Shield ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv
+env/
+venv/
+output_data/
+pipeline.log
