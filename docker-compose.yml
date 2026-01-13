@@ -1,0 +1,54 @@
+services:
+  # --- SERVICE 1: THE LABORATORY (Development) ---
+  # This is where you write and test your code interactively.
+  lab:
+    build: .              # Builds the Dockerfile in this folder
+    container_name: jupyter
+    ports:
+      - "8888:8888"       # Access Jupyter at localhost:8888
+    volumes:
+      - .:/app            # Syncs code live
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - DB_HOST=king_postgres  # <--- Connects to the Shared Infra
+      - DB_USER=king
+      - DB_PASS=password
+      - DB_NAME=data_kingdom
+    networks:
+      - kingdom-net       # Plug into the city grid
+
+  # --- SERVICE 2: THE RUNNER (Production Simulation) ---
+  # This mimics a server running your script in the background.
+  etl_runner:
+    build: .              # Re-uses the EXACT same build as lab
+    container_name: runner
+    # No ports needed! (It's a backend worker, you don't access it via browser)
+    
+    # OPTION A: The "Waiting" Mode (Good for debugging)
+    # It sits idle so you can jump in and run commands manually.
+    command: ["sh", "-c", "echo 'Runner Ready' && sleep infinity"]
+    
+    # OPTION B: The "Active" Mode (Uncomment to actually run a script)
+    # command: ["python", "etl_script.py"]
+    
+    volumes:
+      - .:/app            # Sees the same files as the Lab
+    environment:
+      - DB_HOST=king_postgres
+      - DB_USER=king
+      - DB_PASS=password
+      - DB_NAME=data_kingdom
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - kingdom-net       # Plug into the city grid
+
+# Connect to the pre-existing infrastructure network
+networks:
+  kingdom-net:
+    external: true
