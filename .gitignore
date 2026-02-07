@@ -9,3 +9,6 @@ venv/
 output_data/
 pipeline.log
 .ipynb_checkpoints
+.env.tpl
+*.jsonl
+*.csv

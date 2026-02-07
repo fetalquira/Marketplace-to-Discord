@@ -10,10 +10,12 @@ services:
       - .:/app            # Syncs code live
     environment:
       - JUPYTER_ENABLE_LAB=yes
-      - DB_HOST=king_postgres  # <--- Connects to the Shared Infra
-      - DB_USER=king
-      - DB_PASS=password
-      - DB_NAME=data_kingdom
+      - DB_HOST=local_db  # <--- Connects to the Shared Infra
+      - DB_USER=${LOCAL_DB_USER}
+      - DB_PASS=${LOCAL_DB_PASSWORD}
+      - DB_NAME=local_projects
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - APIFY_TOKEN=${APIFY_TOKEN}
     networks:
       - kingdom-net       # Plug into the city grid
 
@@ -34,10 +36,10 @@ services:
     volumes:
       - .:/app            # Sees the same files as the Lab
     environment:
-      - DB_HOST=king_postgres
-      - DB_USER=king
-      - DB_PASS=password
-      - DB_NAME=data_kingdom
+      - DB_HOST=local_db
+      - DB_USER=${LOCAL_DB_USER}
+      - DB_PASS=${LOCAL_DB_PASSWORD}
+      - DB_NAME=local_projects
     deploy:
       resources:
         reservations:
